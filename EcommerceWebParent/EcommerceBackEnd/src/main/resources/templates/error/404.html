@@ -1,0 +1,24 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	 xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: page_head('Error - Ecommerce Admin', 'none')}"/>
+ 
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div class="m-3">
+			   <h1>404 - Not Found</h1>
+		 	<h2> Sorry,  the requested page could not be found</h2>
+		</div>
+
+
+	<div th:replace="~{fragments :: footer}"></div>
+	
+	</div>
+	 
+	
+</body>
+
+</html>

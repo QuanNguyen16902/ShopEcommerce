@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head('Add Brand - Ecommerce Admin', 'none')}"/>
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h2>Manage Brands | [[${pageTitle}]]</h2>
+		</div>
+
+		
+		<form th:action="@{/brands/save}" th:object="${brand}" method="post"
+		 style="max-width: 500px; margin:0 auto"
+			enctype="multipart/form-data"
+			onsubmit="return checkUnique(this)">
+			 
+			<input type="hidden" th:field="*{id}" />
+			<div class="border border-secondary rounded p-3">
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label">Brand Name:</label>
+					<div class="col-sm-8">
+						<input type="text" class="form-control" th:field="*{name}" required minlength="3"
+							maxlength="128" />
+					</div>
+				</div>
+ 
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label">Brand Logo:</label>
+					<div class="col-sm-8">
+						<input type="hidden" th:field="*{logo}" />
+						<input type="file" id="fileImage" name="fileImage" accept="image/png, image/jpeg"
+							class="col-md-6 mb-2" th:required="${brand.logoPath == null}"/>
+						<img id="thumbnail" alt="Image preview" th:src="@{${brand.logoPath}}"
+							class="img-fluid rounded" />
+				</div>
+					
+				</div>
+				<div class="row mb-3">
+					<label class="col-sm-4 col-form-label">Select one or more categories:</label>
+					<div class="col-sm-8">
+						<select class="form-control" th:field="*{categories}" multiple required
+								style="resize: vertical; height: 200px;">
+								<th:block th:each="brand : ${listCategories}">
+									<option th:value="${brand.id}">[[${brand.name}]]</option>
+								</th:block>
+							
+						</select>
+					</div>
+				</div>
+				
+					<div class="row mb-3">
+					<label class="col-sm-4 col-form-label">Chosen Categories:</label>
+					<div class="col-sm-8">
+					 	<div id="chosenCategories"></div>
+					</div>
+				</div>
+
+				<div class="text-center">
+					<input type="submit" value="Save" class="btn btn-primary m-3" />
+					<input type="button" value="Cancel" class="btn btn-secondary" id="buttonCancel">
+				</div>
+			</div>
+		</form>
+
+		<div th:replace="~{modal_fragments :: modal_dialog}"></div>
+
+			<div th:replace="~{fragments :: footer}"></div>
+	
+	</div>
+
+	<script type="text/javascript">
+		MAX_FILE_SIZE = 102400; //100KB
+		moduleURL = "[[@{/brands}]]"
+	 	
+	 	$(document).ready(function() {
+			dropdownCategories = $("#categories");
+			divchosenCategories = $("#chosenCategories");
+			
+			 dropdownCategories.change(function(){
+			 	divchosenCategories.empty();
+				showChosenCategories(); 
+			 });
+			 showChosenCategories(); 
+		 });
+		 function showChosenCategories(){
+			 dropdownCategories.children("option:selected").each(function() {
+				selectedCategory = $(this);
+				brandId = selectedCategory.val();
+				brandName = selectedCategory.text().replace(/-/g,"");
+				
+				divchosenCategories.append("<span class='badge bg-secondary m-1'>" + brandName + "</span>");
+			 });
+		 }
+	 	
+	 	function checkUnique(form){
+			 brandId = $("#id").val();
+			 brandName = $("#name").val(); 
+			 
+	 		 csrfValue = $("input[name='_csrf']").val();
+	 		 
+	 		 url = "[[@{/brands/check_unique}]]";
+	 		 
+	 		 params = {id: brandId, name: brandName, _csrf:csrfValue};
+	 		 $.post(url, params, function(response){
+				 if(response == "OK"){
+					 form.submit();
+				 }else if(response == "Duplicate"){
+					 showWarningModal("There is another brand having the same name " + brandName);
+				 }else{
+					 showErrorModal("Unknown response from server");
+				 }
+				 
+			  }).fail(function(){
+				  	 showErrorModal("Could not connect to server");
+			  });
+			 return false;
+		 }
+	 	
+	 	
+	</script>
+	<script th:src="@{/js/common_form.js}"></script>
+</body>
+
+</html>

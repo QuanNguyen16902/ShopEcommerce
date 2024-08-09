@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: page_head('Shipping Rates - Ecommerce Admin', 'none')}" />
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h2>Manage Shipping Rates</h2>
+			<a th:href="@{/shipping_rates/new}" class="fas fa-calendar-plus fa-2x icon-dark me-2"></a>
+
+		</div>
+		<div class="container-fluid">
+			<div th:replace="~{fragments :: search_form_and_message}"></div>
+
+			<div class="table-responsive full-details">
+				<table class="table table-bordered table-hover table-striped">
+					<thead>
+						<tr class="table-dark">
+							<th th:replace="~{fragments :: column_link('id', 'ID', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('country', 'Country', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('state', 'State', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('rate', 'Rate', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('days', 'Days', 'none')}"></th>		
+							<th th:replace="~{fragments :: column_link('codSupported', 'COD Supported', 'none')}"></th>
+							
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="rate: ${shippingRates}">
+							<td>[[${rate.id}]]</td>
+							<td>[[${rate.country.name}]]</td>
+							<td>[[${rate.state}]]</td>
+							<td>[[${rate.rate}]]</td>
+							<td>[[${rate.days}]]</td>
+							<td> 
+								<div th:replace="~{shipping_rates/shipping_rates_fragment :: cod_support}"/>
+							</td>
+							<td>
+								<a class="fas fa-edit fa-2x icon-green" th:href="@{'/shipping_rates/edit/' + ${rate.id}}"
+									title="Edit this brand"></a>
+								&nbsp;
+								<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+									th:href="@{'/shipping_rates/delete/'+ ${rate.id}}" title="Delete this rate"
+									th:rateId="${rate.id}"></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<div class="less-details">
+			<div th:each="rate : ${shippingRates}" class="row m-1">
+				<div class="col-4">
+					<span><b>[[${rate.country.name}]]</b></span>
+					<br/>
+					<span>[[${rate.state}]]</span>
+				</div>
+				<div class="col-8">
+					<div class="mt-2">
+						<div th:replace="~{shipping_rates/shipping_rates_fragment :: cod_support}"/>
+						&nbsp;
+						<a class="fas fa-edit fa-2x icon-green" th:href="@{'/shipping_rates/edit/' + ${rate.id}}"
+							title="Edit this rate"></a>
+						&nbsp;
+						<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+							th:href="@{'/shipping_rates/delete/'+ ${rate.id}}" title="Delete this rate"
+							th:rateId="${rate.id}"></a>
+					</div>
+				</div>
+				<div>&nbsp;</div>
+			</div>
+		</div>
+
+	
+		<div th:replace="~{modal_fragments :: confirm_delete_modal}"/>
+		<div th:replace="~{fragments :: pagination('shipping rates')}"></div>
+		<div th:replace="~{modal_fragments :: modal_dialog}"/>
+		<div th:replace="~{fragments :: footer}"></div>
+	
+	</div>
+
+
+	<script type="text/javascript">
+
+
+		$(document).ready(function () {
+			$(".link-delete").on("click", function (e) {
+				e.preventDefault(); // Use preventDefault() instead of defaultPrevented()
+
+				// Get the href attribute
+				var deleteUrl = $(this).attr("href");
+
+				// Set the href attribute for the delete button in the modal
+				$("#deleteproductLink").attr("href", deleteUrl);
+
+				// Show the confirm modal
+				rateId = $(this).attr("rateId");
+				$("#confirmText").text("Are you sure u want to delete this rate ID " + rateId);
+				$("#confirmModal").modal('show');
+			});
+		});
+
+		function clearFilter() {
+			window.location = "[[@{/shipping_rates}]]";
+		}
+
+	</script>
+</body>
+
+</html>

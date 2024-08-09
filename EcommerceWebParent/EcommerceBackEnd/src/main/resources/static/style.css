@@ -1,0 +1,33 @@
+*.icon-white{color: white;}
+*.icon-silver{color: silver;}
+*.icon-green{color: green;}
+*.icon-dark{color: gray;}
+
+*.icon-edit{color: aquamarine;}
+table a{
+	text-decoration: none;
+}
+table img {
+	max-width: 100px;	
+}
+
+@media screen and (max-width: 768px){
+	/*small screen*/
+	div.full-details {display: none;}
+	div.less-details {display: block;}
+	a{
+		text-decoration: none;
+	}
+}
+@media screen and (min-width: 768px) and (max-width:1024px){
+	/*medium screen*/
+	div.full-details {display: block;}
+	div.less-details {display: none;}
+  	.hideable-column {display: none;}
+}
+@media screen and (min-width: 1024px){
+	/*large screen*/
+	div.less-details {display: none;}
+	.hideable-column {display: table-cell;}
+	div.m-3  > form.d-flex{width: 40%;}
+}

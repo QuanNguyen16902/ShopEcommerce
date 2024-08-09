@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	 xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: page_head('Home - Ecommerce Admin', 'none')}"/>
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h1>Ecommerce Admin Control Panel</h1>
+			Welcome
+			<a th:href="@{/account}"
+				sec:authentication="principal.fullname"></a>
+				&nbsp;
+				<span sec:authentication="principal.authorities"></span>
+		</div>
+
+
+	<div th:replace="fragments :: footer"></div>
+	
+	</div>
+	 
+	
+</body>
+
+</html>

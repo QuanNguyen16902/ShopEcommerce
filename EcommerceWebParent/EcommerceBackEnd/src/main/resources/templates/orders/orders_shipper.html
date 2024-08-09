@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: page_head('Shipping Rates - Ecommerce Admin', 'none')}" />
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h2>Manage Orders (Shipper)</h2>
+		</div>
+		 
+		<div >
+					<div th:replace="~{fragments :: search_form_and_message}"></div>
+			<th:block th:each="order : ${listOrders}">
+		
+			 	<div  class="row m-1">
+					 <div class="card">
+						<div class="card-header">
+							<div class="row">
+								<div class="col">
+									 <span>Order ID #[[${order.id}]]</span>
+								</div>
+								<div class="col">
+									 <div class="float-right">
+										 <a class="fas fa-file-alt fa-2x icon-green link-detail"
+										th:href="@{'/orders/detail/' + ${order.id}}"
+										title="View details of this order"></a>
+									 </div>
+								</div>
+
+							</div>							
+						</div>
+						<div class="card-body">
+							<div>
+								<i class="fas fa-user"></i>
+								<b>[[${order.recipientName}]]</b>
+							</div>
+							<div>
+								<i class="fas fa-home"></i>
+								<b>[[${order.recipientAddress}]]</b>
+							</div>
+							<div>
+								<i class="fas fa-phone"></i>
+								[[${order.phoneNumber}]]
+							</div>
+							<div th:if="${order.COD}">
+								<span>COD: <div th:replace="~{fragments :: format_currency(${order.total})}"></div></span>
+								
+							</div>
+						<div>&nbsp;</div>
+						<div class="row">
+							<div class="col">
+								<th:block th:if="${order.picked}">
+									<i class="fas fa-people-carry fa-2x icon-green"></i>
+								</th:block>
+								<th:block th:unless="${order.picked}">
+									<a class="fas fa-people-carry fa-2x icon-dark linkUpdateStatus"
+									th:id="'linkPICKED' + ${order.id}"
+										th:orderId="${order.id}"
+										status="PICKED"
+										th:href="@{'/orders_shipper/update/' + ${order.id} + '/PICKED'}"
+									></a>
+									
+								</th:block>
+							</div>
+							<div class="col">
+								<th:block th:if="${order.shipping}">
+									<a class="fas fa-shipping-fast fa-2x icon-green"
+									></a>
+								</th:block>
+								<th:block th:unless="${order.shipping}">
+									<a class="fas fa-shipping-fast fa-2x icon-dark linkUpdateStatus"
+									th:id="'linkSHIPPING' + ${order.id}"
+									th:orderId="${order.id}"
+									status="SHIPPING"
+									th:href="@{'/orders_shipper/update/' + ${order.id} + '/SHIPPING'}" 
+									></a>
+								</th:block>
+							</div>
+							<div class="col">
+								<th:block th:if="${order.delivered}">
+									<i class="fas fa-box-open fa-2x icon-green"></i>
+								</th:block>
+								<th:block th:unless="${order.delivered}">
+									<a class="fas fa-box-open fa-2x icon-dark linkUpdateStatus" 
+									th:id="'linkDELIVERED' + ${order.id}"
+									th:orderId="${order.id}"
+									status="DELIVERED"
+									th:href="@{'/orders_shipper/update/' + ${order.id} + '/DELIVERED'}"></a>
+								</th:block>
+							</div>
+							<div class="col">
+								<th:block th:if="${order.returned}">
+									<i class="fas fa-undo fa-2x icon-green"></i>
+								</th:block>
+								<th:block th:unless="${order.returned}">
+									<a class="fas fa-undo fa-2x icon-dark linkUpdateStatus"
+									th:id="'linkRETURNED' + ${order.id}"
+									th:orderId="${order.id}"
+									status="RETURNED"
+									th:href="@{'/orders_shipper/update/' + ${order.id} + '/RETURNED'}" ></a>
+								</th:block>
+							</div>
+						</div>	
+
+						</div>
+					</div>
+				 </div>
+			</th:block>
+		</div>
+		
+		<div th:replace="~{fragments :: pagination('orders')}"></div>
+		<div th:replace="~{modal_fragments :: modal_dialog}"/>
+		<div th:replace="~{fragments :: footer}"></div>
+	
+	</div>
+
+	<div class="modal fade" id="detailModal">
+			<div class="modal-dialog modal-lg modal-dialog-center ">
+				<div class="modal-content">
+
+				</div>
+			</div>
+		</div>
+		<div th:fragment="confirm_modal" class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmModalLabel">Update Confirmation</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<span id="confirmText"></span>
+					</div>
+					<div class="modal-footer">
+						<a id="yesButton" href="" class="btn btn-success">Yes</a>
+						<button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	<script type="text/javascript">
+		moduleURL = "[[@{/orders}]]";
+		var csrfHeaderName = "[[${_csrf.headerName}]]";
+		var  csrfValue = "[[${_csrf.token}]]";
+		$(document).ready(function () {
+			$("[name='keyword']").attr("placeholder", "Type #number to search order ID")
+		 
+				handleLinkViewCustomerDetails();
+		});
+		function handleLinkViewCustomerDetails(){
+			$(".link-detail").on("click", function(e){
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			})
+		}
+		function clearFilter() {
+			window.location = "[[@{/orders}]]";
+		}
+
+	</script>
+	<script th:src="@{/js/orders_shipper.js}"></script>
+</body>
+
+</html>

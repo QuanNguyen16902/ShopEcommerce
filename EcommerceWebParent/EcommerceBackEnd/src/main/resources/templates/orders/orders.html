@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: page_head('Shipping Rates - Ecommerce Admin', 'none')}" />
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h2>Manage Orders</h2>
+			<a th:href="@{/shipping_rates/new}" class="fas fa-calendar-plus fa-2x icon-dark me-2"></a>
+
+		</div>
+		<div class="container-fluid">
+			<div th:replace="~{fragments :: search_form_and_message}"></div>
+
+			<div class="table-responsive full-details">
+				<table class="table table-bordered table-hover table-striped">
+					<thead>
+						<tr class="table-dark">
+							<th th:replace="~{fragments :: column_link('id', 'ID', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('customer', 'Customer', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('total', 'Total', 'none')}"></th>
+							<th th:replace="~{fragments :: column_link('orderTime', 'Order Time', 'none')}"></th>
+							<th class="hideable-column">
+								<th th:replace="~{fragments :: column_link('destination', 'Destination', 'tag')}"></th>		
+							</th>
+							<th class="hideable-column">
+								<th th:replace="~{fragments :: column_link('paymentMethod', 'Payment Method', 'tag')}"></th>
+							</th>
+							<th class="hideable-column">
+								<th th:replace="~{fragments :: column_link('status', 'Status', 'tag')}"></th>
+							</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="order: ${listOrders}">
+							<td>[[${order.id}]]</td>
+							<td>
+								<a class="linkCustomerDetail" th:href="@{'/customers/detail/' + ${order.customer.id}}">
+									[[${order.customer.fullName}]]
+								</a>
+							</td>
+							<td>
+								<div th:replace="~{fragments :: format_currency(${order.total})}"></div>
+							</td>
+							<td>
+									<div th:replace="~{fragments :: format_time(${order.orderTime})}"></div>
+							</td>
+							<td class="hideable-column">[[${order.destination}]]</td>
+							<td class="hideable-column">[[${order.paymentMethod}]]</td>
+							<td class="hideable-column">[[${order.status}]]</td>
+						 
+							<td>
+							<a class="fas fa-file-alt fa-2x icon-green link-detail"
+								th:href="@{'/orders/detail/' + ${order.id}}"
+								title="View details of this order"></a>
+							&nbsp;
+							<a class="fas fa-edit fa-2x icon-green" th:href="@{'/orders/edit/' + ${order.id}}"
+								title="Edit this order"></a>
+							&nbsp;
+							<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+								th:href="@{'/orders/delete/'+ ${order.id}}" title="Delete this order"
+								th:orderId="${order.id}"></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+		<div class="less-details">
+			<div th:each="order : ${listOrders}" class="row m-1">
+				<div class="col-2">
+					<span><b>[[${order.id}]]</b></span>
+				</div>
+				<div class="col-10">
+						<div>[[${order.customer.fullName}]], [[${order.country}]]</div>
+						<div><small>[[${order.orderTime}]] - [[${order.status}]]</small></div>
+						<div><div th:replace="~{fragments :: format_currency(${order.total})}"/>Total</div> - [[${order.paymentMethod}]]
+						<div>
+						<a class="fas fa-file-alt fa-2x icon-green link-detail"
+								th:href="@{'/orders/detail/' + ${order.id}}"
+								title="View details of this order"></a>
+						&nbsp;
+						<a class="fas fa-edit fa-2x icon-green" th:href="@{'/orders/edit/' + ${order.id}}"
+							title="Edit this order"></a>
+						&nbsp;
+						<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+							th:href="@{'/orders/delete/'+ ${order.id}}" title="Delete this order"
+							th:orderId="${order.id}"></a>
+							</div>
+				</div>
+				<div>&nbsp;</div>
+			</div>
+		</div>
+	<div class="modal fade" id="detailModal">
+			<div class="modal-dialog modal-lg modal-dialog-center ">
+				<div class="modal-content">
+
+				</div>
+			</div>
+		</div>
+	
+		<div th:replace="~{modal_fragments :: confirm_delete_modal}"/>
+		
+		<div th:replace="~{fragments :: pagination('orders')}"></div>
+		<div th:replace="~{modal_fragments :: modal_dialog}"/>
+		<div th:replace="~{fragments :: footer}"></div>
+	
+	</div>
+
+
+	<script type="text/javascript">
+		moduleURL = "[[@{/orders}]]";
+
+		$(document).ready(function () {
+			$(".link-delete").on("click", function (e) {
+				e.preventDefault(); // Use preventDefault() instead of defaultPrevented()
+
+				// Get the href attribute
+				var deleteUrl = $(this).attr("href");
+
+				// Set the href attribute for the delete button in the modal
+				$("#deleteproductLink").attr("href", deleteUrl);
+
+				// Show the confirm modal
+				rateId = $(this).attr("rateId");
+				$("#confirmText").text("Are you sure u want to delete this rate ID " + rateId);
+				$("#confirmModal").modal('show');
+			});
+			
+			$(".link-detail").on("click", function (e) {
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			})
+			handleLinkViewCustomerDetails();
+		});
+			
+		function handleLinkViewCustomerDetails(){
+			$(".linkCustomerDetail").on("click", function(e){
+				e.preventDefault();
+				linkDetailURL = $(this).attr("href");
+				$("#detailModal").modal("show").find(".modal-content").load(linkDetailURL);
+			})
+		}
+		function clearFilter() {
+			window.location = "[[@{/orders}]]";
+		}
+
+	</script>
+</body>
+
+</html>

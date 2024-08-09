@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Insert title here</title>
+</head>
+
+<body>
+	<div th:fragment="header_menu">
+		<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+			<a class="navbar-brand" th:href="@{/}">
+				<img th:src="@{${SITE_LOGO}}"/>
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNavbar, #searchNavbar"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="topNavbar">
+				<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" href="">Careers</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="">Payment</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="">Shipping &amp; Delivery</a>
+						</li>
+						<th:block sec:authorize="!isAuthenticated()">
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/login}">Login</a>
+						</li>
+ 						
+						<th:block sec:authorize="isAuthenticated()">
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/register}">Register</a>
+						</li>
+						
+						<li class="nav-item">
+							<a class="nav-link" href="">Contact</a>
+						</li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	
+	<div th:fragment="search_nav">
+		<div class="col-md">
+			<th:block sec:authorize="isAuthenticated()"> 
+				<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+					<input type="submit" value="Logout"/>
+				</form>
+			</th:block>
+			<nav class="navbar navbar-expand-sm bg-light">
+					<div class="collapse navbar-collapse" id="searchNavbar">	
+						<form class="form-inline" th:action="@{/search}" method="get">
+							<div class="row g-2">
+								<div class="col-auto">
+									<input type="search" name="keyword" class="form-control mr-sm-2"
+										th:value="${keyword}" 
+									 	placeholder="Keyword" required/>
+								</div>
+								<div class="col-auto">
+									<input type="submit" value="Search" class="btn btn-outline-success"/>
+								</div>
+								
+							</div>
+						</form>
+					<ul class="navbar-nav">
+						<th:block sec:authorize="isAuthenticated()">
+							<li class="nav-item">
+								<b><a class="nav-link" th:href="@{/account_details}"
+										sec:authentication="principal.fullName"></a></b>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" th:href="@{/address_book}">Address Book</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="">Questions</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="">Reviews</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" th:href="@{/orders}">Orders</a>
+							</li>
+								<li class="nav-item">
+								<a class="nav-link fas fa-shopping-cart fa-2x" th:href="@{/cart}"></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="javascript: document.logoutForm.submit()">Logout</a>
+							</li>
+							
+						</th:block>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</div>
+<div th:fragment="footer_menu">
+	<div>
+		<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#bottomNavbar"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="bottomNavbar">
+				<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link" href="">About Us</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="">Privacy Notice</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="">Returns &amp; Refunds</a>
+						</li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+		<div th:fragment="footer" class="text-center m-3">
+			<p>[[${COPYRIGHT}]]</p>
+		</div>
+</div>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function () {
+    var myNavbar = new bootstrap.Collapse(document.getElementById('bottomNavbar'));
+});
+</script>
+</body>
+
+</html>

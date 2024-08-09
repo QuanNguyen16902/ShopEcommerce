@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<div th:fragment="content" id="divProductDetails">
+		
+		<th:block th:each="detail, status : ${product.details}">
+			<div class="row g-3" th:id="'divDetail' + ${status.index}">
+				<input type="hidden" name="detailIDs" th:value="${detail.id}"/>
+			<div class="col-md-3">
+				<label for="detailName" class="form-label">Name:</label>
+				<input type="text" class="form-control" id="detailName" name="detailNames" maxlength="255"
+						th:value="${detail.name}" />
+			</div>
+			<div class="col-md-3">
+				<label for="detailValue" class="form-label">Value:</label>
+				<input type="text" class="form-control" id="detailValue" name="detailValues" maxlength="255"
+						th:value="${detail.value}"/>
+			</div>
+			<div class="col-md-3">
+				<a name="linkRemoveDetail" class="btn fas fa-times-circle fa-2x icon-dark" 
+				title="Remove this image"></a>
+			</div>
+				
+		</div>
+		</th:block>
+		<div class="row g-3" id="'divDetail' + ${#lists.size(product.details)}">
+				<input type="hidden" name="detailIDs" value="0"/>
+			<div class="col-md-3">
+				<label for="detailName" class="form-label">Name:</label>
+				<input type="text" class="form-control" id="detailName" name="detailNames" maxlength="255">
+			</div>
+			<div class="col-md-3">
+				<label for="detailValue" class="form-label">Value:</label>
+				<input type="text" class="form-control" id="detailValue" name="detailValues" maxlength="255">
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

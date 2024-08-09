@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: page_head('Categories - Ecommerce Admin', 'none')}" />
+
+
+<body>
+	<div class="container-fluid">
+		<div th:replace="~{navigation :: menu}"></div>
+
+		<div>
+			<h2>Manage categories</h2>
+			<a th:href="@{/categories/new}" class="fas fa-calendar-plus fa-2x icon-dark me-2"></a>
+
+			<a th:href="@{/categories/export/csv}" class="fas fa-file-csv fa-2x icon-dark me-2"></a>
+			<a th:href="@{/categories/export/excel}" class="fas fa-file-excel fa-2x icon-dark me-2"></a>
+			<a th:href="@{/categories/export/pdf}" class="fas fa-file-pdf fa-2x icon-dark"></a>
+		</div>
+
+
+		
+
+		<div class="container-fluid">
+			<div th:replace="~{fragments :: search_form_and_message}"></div>
+
+			<div class="table-responsive full-details">
+				<table class="table table-bordered table-hover table-striped">
+					<thead>
+						<tr class="table-dark">
+							<th scope="col">ID</th>
+							<th scope="col">
+								Category Image
+							</th>
+							<th scope="col" th:replace="~{fragments :: column_link('name', 'Category Name', 'none')}">
+							</th>
+
+							<th scope="col" class="hideable-column">Alias</th>
+							<th scope="col">Enabled</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="category: ${listCategories}">
+							<td>[[${category.id}]]</td>
+							<td>
+								<img th:src="@{${category.getImagePath}}" style="width: 100px" class="img-fluid" />
+							</td>
+							<td>[[${category.name}]]</td>
+							<td class="hideable-column">[[${category.alias}]]</td>
+							<td>
+								<div th:replace="~{fragments :: status(${category.enabled}, 'category', '/categories/' + ${category.id})}"></div>
+							</td>
+							<td>
+								<a class="fas fa-edit fa-2x icon-green"
+									th:href="@{'/categories/edit/' + ${category.id}}" title="Edit this category"></a>
+								&nbsp;
+								<th:block th:if="${category.hasChildren == false}">
+									<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+										th:href="@{'/categories/delete/'+ ${category.id}}" title="Delete this category"
+										th:categoryId="${category.id}"></a>
+								</th:block>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+		</div>
+			
+			<div class="less-details">
+				<div th:each="category : ${listCategories}" class="row m-1">
+					<div class="col-4">
+						<img th:src="@{${category.imagePath}}" style="width: 100px;" class="img-fluid"/>
+					</div>
+					<div class="col-8">
+						<div>[[${category.name}]]</div>
+						<div class="mt-2">
+							<div th:replace="~{fragments :: status(${category.enabled}, 'category', '/categories/' + ${category.id})}"></div>
+										&nbsp;
+					
+								<a class="fas fa-edit fa-2x icon-green"
+									th:href="@{'/categories/edit/' + ${category.id}}" title="Edit this category"></a>
+								&nbsp;
+								<th:block th:if="${category.hasChildren == false}">
+									<a class="fas fa-trash fa-2x icon-dark link-delete" id="link-delete"
+										th:href="@{'/categories/delete/'+ ${category.id}}" title="Delete this category"
+										th:categoryId="${category.id}"></a>
+								</th:block>
+						</div>
+					</div>	
+				</div>
+			</div>
+
+		<div th:if="${keyword != null}" class="text-center">
+			<span>Search result does not show categories in hierarchical form</span>
+			<div th:replace="~{fragments :: pagination('categories')}"></div>
+		</div>
+		<th:block th:unless="${keyword != null}" class="text-center">
+			<div th:replace="~{fragments :: pagination('top-level categories')}" th:remove="tag"></div>
+		</th:block>
+
+
+		<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="confirmModalLabel">Confirm Deletion</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<span id="confirmText"></span>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+						<a id="deletecategoryLink" class="btn btn-danger">Delete</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div th:replace="~{fragments :: footer}"></div>
+
+	</div>
+
+
+	<script type="text/javascript">
+
+
+		$(document).ready(function () {
+			$(".link-delete").on("click", function (e) {
+				e.preventDefault(); // Use preventDefault() instead of defaultPrevented()
+
+				// Get the href attribute
+				var deleteUrl = $(this).attr("href");
+
+				// Set the href attribute for the delete button in the modal
+				$("#deletecategoryLink").attr("href", deleteUrl);
+
+				// Show the confirm modal
+				categoryId = $(this).attr("categoryId");
+				$("#confirmText").text("Are you sure u want to delete this category ID " + categoryId);
+				$("#confirmModal").modal('show');
+			});
+		});
+
+		function clearFilter() {
+			window.location = "[[@{/categories}]]";
+		}
+
+	</script>
+</body>
+
+</html>
